@@ -170,11 +170,3 @@ if __name__ == '__main__':
         print("PID: {:8X}\tName: {:30}\tRegions: {}".format(pe.get_pid(), pe.pe.szExeFile, len(pe.mem.memory)))
 
 
-
-
-
-
-
-
-
-
