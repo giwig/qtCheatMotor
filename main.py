@@ -1,13 +1,18 @@
 import os
 import ctypes
+import sys
 from pprint import pprint
 from ctypes import c_uint64, c_size_t
 
-import win32con
+# import win32con
 # from platinfo import PlatInfo
 # from ReadWriteMemory import ReadWriteMemory, Process
-from capstone import *
-from hexdump import hexdump
+# from capstone import *
+# from hexdump import hexdump
+
+from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QDialog
+from ui.mainwindow import Ui_MainWindow
+from ui.process_list import Ui_Dialog
 
 from inc.process import GWProcess
 from inc.process_list import GWProcessList
@@ -56,6 +61,33 @@ def dism(mem_buf: bytes = None, buff_len: int = 0, address: ctypes.c_uint64 = 0)
 
 """
 
+
+class ProcessList(QDialog):
+
+    def __init__(self, parent=None):
+        super(ProcessList, self).__init__(parent)
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+
+
+class MainWindow(QMainWindow):
+
+    def __init__(self, parent=None):
+        super(MainWindow, self).__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+        self.binding()
+
+    def binding(self):
+        self.ui.actionChoose.triggered.connect(self.onProcessList)
+
+    def onProcessList(self):
+        dlg = ProcessList(self)
+        dlg.exec_()
+        print("List")
+
+
+
 if __name__ == '__main__':
     os.system("cls")
 
@@ -94,6 +126,13 @@ if __name__ == '__main__':
     """
 
     # import pefile
+
+    app = QApplication([])
+    application = MainWindow()
+    application.show()
+
+    sys.exit(app.exec())
+
 
     p = GWProcessList()
     p.refresh_process_list()

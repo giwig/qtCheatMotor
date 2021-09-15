@@ -67,7 +67,7 @@ class GWSystemInfo:
 
     def get_system_info(self):
         si = SYSTEM_INFO(0)
-        print("SYSTEM_INFO Size: {}".format(sizeof(SYSTEM_INFO)))
+        # print("SYSTEM_INFO Size: {}".format(sizeof(SYSTEM_INFO)))
 
         GetNativeSystemInfo(byref(si))
 

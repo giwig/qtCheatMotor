@@ -6,4 +6,4 @@ pushd ui
 
 popd
 
-python ./main.py
+#python ./main.py
