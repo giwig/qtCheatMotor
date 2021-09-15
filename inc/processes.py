@@ -1,7 +1,10 @@
 #!/bin/python
 
 from ctypes import c_uint64, windll, c_uint32, c_void_p, c_char, Structure, c_long, c_ulong, POINTER, sizeof, c_size_t, c_wchar, c_int
-from inc.process import GWProcess, PROCESSENTRY32W, PROCESSENTRY32A, CloseHandle
+
+import win32api
+
+from inc.process import GWProcess, PROCESSENTRY32W, PROCESSENTRY32A
 
 TH32CS_INHERIT      = 0x80000000
 TH32CS_SNAPHEAPLIST = 0x00000001
@@ -79,7 +82,7 @@ class GWProcesses:
         else:
             print("error")
 
-        CloseHandle(self.hSnap)
+        win32api.CloseHandle(self.hSnap)
         return True
 
 

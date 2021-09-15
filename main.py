@@ -3,6 +3,7 @@ import ctypes
 from pprint import pprint
 from ctypes import c_uint64, c_size_t
 
+import win32con
 from platinfo import PlatInfo
 from ReadWriteMemory import ReadWriteMemory, Process
 from capstone import *
@@ -95,11 +96,9 @@ if __name__ == '__main__':
     for pe in p.p_list:
         print("{:8X}\t{}\t{}".format(pe.get_pid(), pe.pe.szExeFile, pe.file_dir))
 
-        pe.process_open()
         if pe.process_read( c_uint64(0x400000), c_size_t(0x100)):
             print(pe.get_memdump(in_off=0x400000))
             # print(pe.mem_buff)
-        pe.process_close()
 
 
 
