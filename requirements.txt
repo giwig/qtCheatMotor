@@ -1,0 +1,14 @@
+capstone
+pyinjector
+# haystack
+ReadWriteMemory
+simple-hexdump
+pefile
+
+pywin32
+
+
+pyqt5
+pyqt5-tools
+
+platinfo
