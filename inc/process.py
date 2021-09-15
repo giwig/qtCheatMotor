@@ -4,12 +4,13 @@ from ctypes import c_uint64, windll, c_uint32, c_void_p, c_char, Structure, c_lo
     c_wchar, c_int, c_bool, WinDLL
 from ctypes.wintypes import *
 
+
 import win32api
 import win32con
 import pywintypes
 import win32process
 from hexdump import hexdump
-
+from inc.process_memory import GWVirtualMemory
 
 """
 kernel32 = WinDLL('kernel32.dll')
@@ -79,10 +80,12 @@ class GWProcess:
     handle:     c_void_p            = None
     mem_buff                        = None
     file_dir:   str                 = None
+    mem:        GWVirtualMemory     = None
 
     def __init__(self, pe: PROCESSENTRY32W = None):
         if pe:
             self.pe = pe
+            self.mem = GWVirtualMemory()
             self.get_dir()
 
     def set_pe(self, pe: PROCESSENTRY32W = -1):
@@ -96,6 +99,24 @@ class GWProcess:
 
     def get_memdump(self, in_off = 0) -> str:
         return hexdump(self.mem_buff, off=in_off)
+
+    def memory_information_by_address(self, in_address: c_uint64 = 0):
+        if self.process_open(in_access=win32con.PROCESS_QUERY_INFORMATION):
+            self.mem.handle_set(self.handle)
+            self.mem.get_memory_information_by_address(in_address=in_address)
+            self.mem.handle_remove()
+            self.process_close()
+            return True
+        return False
+
+    def memory_enum_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0x7fffffffffffffff):
+        if self.process_open(in_access=win32con.PROCESS_QUERY_INFORMATION):
+            self.mem.handle_set(self.handle)
+            self.mem.enum_memory_from_to(in_from=in_from, in_to=in_to)
+            self.mem.handle_remove()
+            self.process_close()
+            return True
+        return False
 
     def get_dir(self):
         self.process_open(in_access=win32con.PROCESS_QUERY_INFORMATION, in_inherit=False)

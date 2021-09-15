@@ -8,7 +8,7 @@ from platinfo import PlatInfo
 from ReadWriteMemory import ReadWriteMemory, Process
 from capstone import *
 from hexdump import hexdump
-from inc.processes import GWProcesses
+from inc.process_list import GWProcesses
 
 
 def find_process(name="UE4Editor.exe") -> Process:
@@ -94,11 +94,13 @@ if __name__ == '__main__':
     p = GWProcesses()
     p.refresh_process_list()
     for pe in p.p_list:
-        print("{:8X}\t{}\t{}".format(pe.get_pid(), pe.pe.szExeFile, pe.file_dir))
 
-        if pe.process_read( c_uint64(0x800000), c_size_t(0x100)):
-            print(pe.get_memdump(in_off=0x400000))
-            # print(pe.mem_buff)
+        read_address = 0x800000
+        mbi = pe.memory_information_by_address(in_address=read_address)
+        if pe.process_read(c_uint64(read_address), c_size_t(0x100)):
+            print(pe.get_memdump(in_off=read_address))
+            pe.memory_enum_from_to()
+        print("{:8X}\t{}\t{}".format(pe.get_pid(), pe.pe.szExeFile, pe.file_dir))
 
 
 
