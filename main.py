@@ -96,7 +96,7 @@ if __name__ == '__main__':
     for pe in p.p_list:
         print("{:8X}\t{}\t{}".format(pe.get_pid(), pe.pe.szExeFile, pe.file_dir))
 
-        if pe.process_read( c_uint64(0x400000), c_size_t(0x100)):
+        if pe.process_read( c_uint64(0x800000), c_size_t(0x100)):
             print(pe.get_memdump(in_off=0x400000))
             # print(pe.mem_buff)
 
