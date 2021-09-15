@@ -80,28 +80,46 @@ class GWProcess:
     handle:     c_void_p            = None
     mem_buff                        = None
     file_dir:   str                 = None
-    mem:        GWVirtualMemory     = None
+    mem:        GWVirtualMemory     = GWVirtualMemory()
 
+    # ##########################################################################
+    #   Constructor
+    # ##########################################################################
     def __init__(self, pe: PROCESSENTRY32W = None):
         if pe:
             self.pe = pe
-            self.mem = GWVirtualMemory()
+            self.memory_enum_from_to()
             self.get_dir()
 
+    # ##########################################################################
+    #   Setter for PROCESSENTRY32W of this process
+    # ##########################################################################
     def set_pe(self, pe: PROCESSENTRY32W = -1):
         self.pe = pe
 
+    # ##########################################################################
+    #   Getter for PROCESSENTRY32W of this process
+    # ##########################################################################
     def get_pe(self) -> PROCESSENTRY32W:
         return self.pe
 
+    # ##########################################################################
+    #   Get's ProcessID
+    # ##########################################################################
     def get_pid(self) -> int:
-        return self.pe.th32ProcessID
+        return int(self.pe.th32ProcessID)
 
-    def get_memdump(self, in_off = 0) -> str:
+    # ##########################################################################
+    #   Simple HexDump -> String
+    # ##########################################################################
+    def get_memdump(self, in_off=0) -> str:
         return hexdump(self.mem_buff, off=in_off)
 
+    # ##########################################################################
+    #   Receive MEMORY_BASIC_INFORMATION Structure for an address
+    # ##########################################################################
     def memory_information_by_address(self, in_address: c_uint64 = 0):
-        if self.process_open(in_access=win32con.PROCESS_QUERY_INFORMATION):
+        if self.process_open(in_access=win32con.PROCESS_QUERY_INFORMATION, in_inherit=True):
             self.mem.handle_set(self.handle)
             self.mem.get_memory_information_by_address(in_address=in_address)
             self.mem.handle_remove()
@@ -109,8 +127,11 @@ class GWProcess:
             return True
         return False
 
+    # ##########################################################################
+    #   Creates a list of MEMORY_BASIC_INFORMATION
+    # ##########################################################################
     def memory_enum_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0x00007fffffffffff):
-        if self.process_open(in_access=win32con.PROCESS_QUERY_INFORMATION):
+        if self.process_open(in_access=win32con.PROCESS_QUERY_INFORMATION, in_inherit=True):
             self.mem.handle_set(self.handle)
             self.mem.enum_memory_from_to(in_from=in_from, in_to=in_to)
             self.mem.handle_remove()
@@ -118,6 +139,9 @@ class GWProcess:
             return True
         return False
 
+    # ##########################################################################
+    #   Try to get a directory for those process
+    # ##########################################################################
     def get_dir(self):
         self.process_open(in_access=win32con.PROCESS_QUERY_INFORMATION, in_inherit=False)
         if self.handle:
@@ -127,6 +151,9 @@ class GWProcess:
         else:
             return False
 
+    # ##########################################################################
+    #   Open this process and get handle
+    # ##########################################################################
     def process_open(self, in_access: c_int = win32con.PROCESS_QUERY_LIMITED_INFORMATION, in_inherit: c_bool = False) -> bool:
         if not self.pe:
             return False
@@ -139,10 +166,16 @@ class GWProcess:
             return False
         return True
 
+    # ##########################################################################
+    #   Closes that process
+    # ##########################################################################
     def process_close(self):
         CloseHandle(self.handle)
         self.handle = None
 
+    # ##########################################################################
+    #   Reads some memory of the process by address and buffer length
+    # ##########################################################################
     def process_read(self, in_offset: c_uint64, in_len: c_size_t) -> bool:
         mem_buff    = (c_char * in_len.value)(0)
         bytesReaded = c_uint64(0)
@@ -157,5 +190,8 @@ class GWProcess:
             self.mem_buff = bytearray(mem_buff)
             return True
         return False
+    # ##########################################################################
+    #
+    # ##########################################################################
 
 

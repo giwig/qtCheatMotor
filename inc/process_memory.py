@@ -33,19 +33,39 @@ VirtualQueryEx.rettype         = c_size_t
 
 class GWVirtualMemory:
 
-    memory: list[MEMORY_BASIC_INFORMATION]  = list()
-    err:    GWErrors                        = GWErrors()
+    memory: list[MEMORY_BASIC_INFORMATION]  =   list()
+    err:    GWErrors                        =   GWErrors()
+    handle: c_void_p                        =   None
 
+    # ##########################################################################
+    #   Constructor
+    # ##########################################################################
     def __init__(self, handle: c_void_p = None):
+        self.clear_memory_list()
         if handle:
             self.handle = handle
 
+    # ##########################################################################
+    #   Clear list
+    # ##########################################################################
+    def clear_memory_list(self):
+        self.memory.clear()
+
+    # ##########################################################################
+    #   Set handle
+    # ##########################################################################
     def handle_set(self, in_handle):
         self.handle = in_handle
 
+    # ##########################################################################
+    #   Removes handle
+    # ##########################################################################
     def handle_remove(self):
         self.handle = None
 
+    # ##########################################################################
+    #   Get's MEMORY_BASIC_INFORMATION by Address
+    # ##########################################################################
     def get_memory_information_by_address(self, in_address: c_uint64 = 0):
         if not self.handle:
             return False
@@ -56,7 +76,11 @@ class GWVirtualMemory:
             return False
         return mbi
 
+    # ##########################################################################
+    #   Get's list of MEMORY_BASIC_INFORMATION
+    # ##########################################################################
     def enum_memory_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0x00007fffffffffff):
+        self.clear_memory_list()
         if not self.handle:
             return False
         address = in_from
@@ -71,4 +95,7 @@ class GWVirtualMemory:
                 address                 =   addr_base.value + addr_len.value + 1
             else:
                 address += 0x1000
+    # ##########################################################################
+    #
+    # ##########################################################################
 

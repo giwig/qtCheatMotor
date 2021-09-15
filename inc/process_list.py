@@ -49,16 +49,25 @@ class GWProcesses:
     p_list:     list[GWProcess]     = list()
     hSnap:      POINTER(c_uint64)   = None
 
+    # ##########################################################################
+    #   Constructor
+    # ##########################################################################
     def __init__(self):
         self.clear_process_list()
 
+    # ##########################################################################
+    #   Clear list
+    # ##########################################################################
     def clear_process_list(self):
         if self.p_list is not None:
-            self.p_list = list()
+            self.p_list.clear()
             return True
         else:
             return False
 
+    # ##########################################################################
+    #   Recreate tHe list of processes
+    # ##########################################################################
     def refresh_process_list(self, in_flags: c_uint32 = TH32CS_SNAPPROCESS, in_pid: c_uint32 = -1) -> bool:
         self.clear_process_list()
         self.hSnap = CreateToolhelp32Snapshot(in_flags, in_pid)
@@ -84,5 +93,8 @@ class GWProcesses:
 
         win32api.CloseHandle(self.hSnap)
         return True
+    # ##########################################################################
+    #
+    # ##########################################################################
 
 

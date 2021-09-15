@@ -96,10 +96,10 @@ if __name__ == '__main__':
     for pe in p.p_list:
 
         read_address = 0x800000
-        mbi = pe.memory_information_by_address(in_address=read_address)
+        # mbi = pe.memory_information_by_address(in_address=read_address)
         if pe.process_read(c_uint64(read_address), c_size_t(0x100)):
             print(pe.get_memdump(in_off=read_address))
-            pe.memory_enum_from_to()
+            # pe.memory_enum_from_to()
         print("{:8X}\t{}\t{} Regions: {}".format(pe.get_pid(), pe.pe.szExeFile, pe.file_dir, len(pe.mem.memory)))
 
 
