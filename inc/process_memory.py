@@ -3,6 +3,7 @@ from ctypes.wintypes import DWORD
 from pprint import pprint
 
 from inc.errors import GWErrors
+from inc.system_info import GWSystemInfo
 
 
 class MEMORY_BASIC_INFORMATION(Structure):
@@ -16,14 +17,30 @@ class MEMORY_BASIC_INFORMATION(Structure):
                 ('Type',                DWORD))
 
 
-MEM_COMMIT      =   0x1000
-MEM_FREE        =   0x10000
-MEM_RESERVE     =   0x2000
+MEM_COMMIT              =   0x1000
+MEM_FREE                =   0x10000
+MEM_RESERVE             =   0x2000
 
 
-MEM_IMAGE       =   0x1000000
-MEM_MAPPED      =   0x40000
-MEM_PRIVATE     =   0x20000
+MEM_IMAGE               =   0x1000000
+MEM_MAPPED              =   0x40000
+MEM_PRIVATE             =   0x20000
+
+
+PAGE_EXECUTE            =   0x10
+PAGE_EXECUTE_READ       =   0x20
+PAGE_EXECUTE_READWRITE  =   0x40
+PAGE_EXECUTE_WRITECOPY  =   0x80
+PAGE_NOACCESS           =   0x01
+PAGE_READONLY           =   0x02
+PAGE_READWRITE          =   0x04
+PAGE_WRITECOPY          =   0x08
+PAGE_TARGETS_INVALID    =   0x40000000
+PAGE_TARGETS_NO_UPDATE  =   0x40000000
+PAGE_GUARD              =   0x100
+PAGE_NOCACHE            =   0x200
+PAGE_WRITECOMBINE       =   0x400
+
 
 
 VirtualQueryEx                 = windll.kernel32.VirtualQueryEx
@@ -33,17 +50,22 @@ VirtualQueryEx.rettype         = c_size_t
 
 class GWVirtualMemory:
 
+    si:     GWSystemInfo    =   None
     memory: dict            =   dict()
     err:    GWErrors        =   GWErrors()
-    handle: c_void_p        =   None
+    handle                  =   None
 
     # ##########################################################################
     #   Constructor
     # ##########################################################################
-    def __init__(self, handle: c_void_p = None):
+    def __init__(self, handle: c_void_p = None, si: GWSystemInfo = None):
         self.clear_memory_list()
         if handle:
             self.handle = handle
+        if si is not None:
+            self.si = si
+        else:
+            self.si = GWSystemInfo()
 
     # ##########################################################################
     #   Clear list
@@ -79,27 +101,38 @@ class GWVirtualMemory:
     # ##########################################################################
     #   Get's list of MEMORY_BASIC_INFORMATION
     # ##########################################################################
-    def enum_memory_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0x00007fffffff0000):
+    def enum_memory_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0):
         self.clear_memory_list()
         if not self.handle:
             return False
-        address = in_from
-        while address < in_to:
+        # print(self.si)
+        addr_max: c_uint64 = in_to
+        addr_min: c_uint64 = in_from
+        if addr_max  < self.si.lpMaximumApplicationAddress:
+            addr_max = self.si.lpMaximumApplicationAddress - 1
+        if addr_min  < self.si.lpMinimumApplicationAddress:
+            addr_min = self.si.lpMinimumApplicationAddress + 1
+
+        address = addr_min
+        pid = windll.kernel32.GetProcessId(self.handle)
+        while address < addr_max:
             mbi = self.get_memory_information_by_address(address)
             if mbi is not False:
-                addr_base:  c_uint64 = c_uint64(mbi.BaseAddress)
-                addr_len:   c_uint64 = c_uint64(mbi.RegionSize)
-                # if mbi.State is MEM_COMMIT: #and mbi.Type is MEM_PRIVATE:
-                self.memory[mbi.BaseAddress] = mbi
-                # self.memory.append(mbi)
-                # print("Address: {:X} Status: {:X}".format(address, mbi.State))
-                address                 =   addr_base.value + addr_len.value + 1
+                addr_base: c_uint64 = c_uint64(mbi.BaseAddress)
+                addr_len:  c_uint64 = c_uint64(mbi.RegionSize)
+                if ( mbi.State and MEM_COMMIT ) and (mbi.Protect and PAGE_READWRITE ):
+                    self.memory[mbi.BaseAddress] = mbi
+                address = addr_base.value + addr_len.value + 1
             else:
                 print("Error: {} Base: 0x{:016X}".format(
                     self.err.get_error_string(),
                     address
                 ))
-                address += 0x1000
+                return False
+        print("ProcessID: {:5}\tRegions: {}".format(
+            pid,
+            len(self.memory)
+        ))
     # ##########################################################################
     #
     # ##########################################################################

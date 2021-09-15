@@ -8,6 +8,8 @@ from platinfo import PlatInfo
 from ReadWriteMemory import ReadWriteMemory, Process
 from capstone import *
 from hexdump import hexdump
+
+from inc.process import GWProcess
 from inc.process_list import GWProcessList
 
 
@@ -93,20 +95,19 @@ if __name__ == '__main__':
 
     p = GWProcessList()
     p.refresh_process_list()
-    print("Process count: {} PageSize: {:X} {:X} {:X}".format(
+    print("Process count: {} PageSize: {:X} Min: 0x{:X} Max: 0x{:X} CPU's: {}".format(
         p.count,
         p.system_info.dwPageSize,
         p.system_info.lpMinimumApplicationAddress,
-        p.system_info.lpMaximumApplicationAddress
+        p.system_info.lpMaximumApplicationAddress,
+        p.system_info.dwNumberOfProcessors
     ))
     for pe in p.p_list:
-
-        read_address = 0x800000
-        # mbi = pe.memory_information_by_address(in_address=read_address)
+        pe: GWProcess   = pe
+        read_address    = 0x800000
         if pe.process_read(c_uint64(read_address), c_size_t(0x100)):
             print(pe.get_memdump(in_off=read_address))
-        #     pe.memory_enum_from_to()
-        print("{:8X}\t{}\t{} Regions: {}".format(pe.get_pid(), pe.pe.szExeFile, pe.file_dir, len(pe.mem.memory)))
+        print("PID: {:8X}\tName: {:30}\tRegions: {}".format(pe.get_pid(), pe.pe.szExeFile, len(pe.mem.memory)))
 
 
 

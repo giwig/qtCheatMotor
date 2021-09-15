@@ -96,7 +96,7 @@ class GWProcess:
             self.si = si
         else:
             self.si = GWSystemInfo()
-
+        self.mem = GWVirtualMemory(si=self.si)
         self.memory_enum_from_to()
         # self.get_dir()
 
@@ -127,7 +127,7 @@ class GWProcess:
     # ##########################################################################
     #   Receive MEMORY_BASIC_INFORMATION Structure for an address
     # ##########################################################################
-    def memory_information_by_address(self, in_address: c_uint64 = 0):
+    def memory_information_by_address(self, in_address: c_uint64 = 0, force: bool = False):
         if self.process_open(in_access=win32con.PROCESS_QUERY_INFORMATION, in_inherit=True):
             self.mem.handle_set(self.handle)
             self.mem.get_memory_information_by_address(in_address=in_address)
@@ -139,13 +139,9 @@ class GWProcess:
     # ##########################################################################
     #   Creates a list of MEMORY_BASIC_INFORMATION
     # ##########################################################################
-    def memory_enum_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0x00007fffffff0000):
+    def memory_enum_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0):
         if self.process_open(in_access=win32con.PROCESS_QUERY_INFORMATION, in_inherit=True):
             self.mem.handle_set(self.handle)
-            if in_to >= self.si.lpMaximumApplicationAddress:
-                in_to = self.si.lpMaximumApplicationAddress
-            if in_from <= self.si.lpMinimumApplicationAddress:
-                in_from = self.si.lpMinimumApplicationAddress + 1
             self.mem.enum_memory_from_to(in_from=in_from, in_to=in_to)
             self.mem.handle_remove()
             self.process_close()
