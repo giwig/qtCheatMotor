@@ -33,9 +33,9 @@ VirtualQueryEx.rettype         = c_size_t
 
 class GWVirtualMemory:
 
-    memory: list[MEMORY_BASIC_INFORMATION]  =   list()
-    err:    GWErrors                        =   GWErrors()
-    handle: c_void_p                        =   None
+    memory: dict            =   dict()
+    err:    GWErrors        =   GWErrors()
+    handle: c_void_p        =   None
 
     # ##########################################################################
     #   Constructor
@@ -49,7 +49,7 @@ class GWVirtualMemory:
     #   Clear list
     # ##########################################################################
     def clear_memory_list(self):
-        self.memory.clear()
+        self.memory = dict()
 
     # ##########################################################################
     #   Set handle
@@ -79,21 +79,26 @@ class GWVirtualMemory:
     # ##########################################################################
     #   Get's list of MEMORY_BASIC_INFORMATION
     # ##########################################################################
-    def enum_memory_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0x00007fffffffffff):
+    def enum_memory_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0x00007fffffff0000):
         self.clear_memory_list()
         if not self.handle:
             return False
         address = in_from
         while address < in_to:
             mbi = self.get_memory_information_by_address(address)
-            if mbi:
-                addr_base: c_uint64 = c_uint64(mbi.BaseAddress)
-                addr_len: c_uint64 = c_uint64(mbi.RegionSize)
-                if int(mbi.State) is not MEM_FREE: #and mbi.Type is MEM_PRIVATE:
-                    self.memory.append(mbi)
-                    # print("Address: {:X} Status: {:X}".format(address, mbi.State))
+            if mbi is not False:
+                addr_base:  c_uint64 = c_uint64(mbi.BaseAddress)
+                addr_len:   c_uint64 = c_uint64(mbi.RegionSize)
+                # if mbi.State is MEM_COMMIT: #and mbi.Type is MEM_PRIVATE:
+                self.memory[mbi.BaseAddress] = mbi
+                # self.memory.append(mbi)
+                # print("Address: {:X} Status: {:X}".format(address, mbi.State))
                 address                 =   addr_base.value + addr_len.value + 1
             else:
+                print("Error: {} Base: 0x{:016X}".format(
+                    self.err.get_error_string(),
+                    address
+                ))
                 address += 0x1000
     # ##########################################################################
     #

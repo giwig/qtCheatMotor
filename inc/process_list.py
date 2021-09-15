@@ -1,10 +1,12 @@
 #!/bin/python
 
 from ctypes import c_uint64, windll, c_uint32, c_void_p, c_char, Structure, c_long, c_ulong, POINTER, sizeof, c_size_t, c_wchar, c_int
+from pprint import pprint
 
 import win32api
 
 from inc.process import GWProcess, PROCESSENTRY32W, PROCESSENTRY32A
+from inc.system_info import GWSystemInfo
 
 TH32CS_INHERIT      = 0x80000000
 TH32CS_SNAPHEAPLIST = 0x00000001
@@ -44,15 +46,17 @@ Process32NextW.argtypes             = [ c_void_p, POINTER(PROCESSENTRY32W) ]
 Process32NextW.rettype              = c_int
 
 
-class GWProcesses:
-
-    p_list:     list[GWProcess]     = list()
-    hSnap:      POINTER(c_uint64)   = None
+class GWProcessList:
+    p_list:         list                =   list()
+    hSnap:          POINTER(c_uint64)   =   None
+    count:          int                 =   0
+    system_info:    GWSystemInfo        =   None
 
     # ##########################################################################
     #   Constructor
     # ##########################################################################
     def __init__(self):
+        self.system_info = GWSystemInfo()
         self.clear_process_list()
 
     # ##########################################################################
@@ -60,7 +64,7 @@ class GWProcesses:
     # ##########################################################################
     def clear_process_list(self):
         if self.p_list is not None:
-            self.p_list.clear()
+            self.p_list = list()
             return True
         else:
             return False
@@ -78,16 +82,18 @@ class GWProcesses:
         pe64: PROCESSENTRY32W = PROCESSENTRY32W()
         pe64.dwSize = sizeof(pe64)
         if Process32FirstW(self.hSnap, pe64):
+            self.p_list.append( GWProcess( pe64 ) )
+            self.count += 1
             # print("Name == {} PID == {}".format(pe64.szExeFile, pe64.th32ProcessID ))
-            self.p_list.append(GWProcess(pe64))
+
             pe64 = PROCESSENTRY32W()
             pe64.dwSize = sizeof( pe64 )
             while Process32NextW(self.hSnap, pe64):
+                self.p_list.append( GWProcess( pe64 ) )
+                self.count += 1
                 # print("Name == {} PID == {}".format(pe64.szExeFile, pe64.th32ProcessID))
                 pe64 = PROCESSENTRY32W()
                 pe64.dwSize = sizeof(pe64)
-                self.p_list.append( GWProcess(pe64) )
-
         else:
             print("error")
 

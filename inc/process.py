@@ -1,9 +1,9 @@
 #!/bin/python
-
+import time
 from ctypes import c_uint64, windll, c_uint32, c_void_p, c_char, Structure, c_long, c_ulong, POINTER, sizeof, c_size_t, \
     c_wchar, c_int, c_bool, WinDLL
 from ctypes.wintypes import *
-
+from pprint import pprint
 
 import win32api
 import win32con
@@ -75,7 +75,7 @@ CloseHandle.rettype                 = c_int
 
 class GWProcess:
 
-    pe:         PROCESSENTRY32W     = None
+    pe:         PROCESSENTRY32W     = PROCESSENTRY32W()
     exe_name:   str                 = None
     handle:     c_void_p            = None
     mem_buff                        = None
@@ -86,10 +86,13 @@ class GWProcess:
     #   Constructor
     # ##########################################################################
     def __init__(self, pe: PROCESSENTRY32W = None):
-        if pe:
-            self.pe = pe
-            self.memory_enum_from_to()
-            self.get_dir()
+        # time.sleep(0.1)
+        # print(pe.szExeFile)
+        if not pe:
+            return
+        self.pe = pe
+        self.memory_enum_from_to()
+        # self.get_dir()
 
     # ##########################################################################
     #   Setter for PROCESSENTRY32W of this process
@@ -130,7 +133,7 @@ class GWProcess:
     # ##########################################################################
     #   Creates a list of MEMORY_BASIC_INFORMATION
     # ##########################################################################
-    def memory_enum_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0x00007fffffffffff):
+    def memory_enum_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0x00007fffffff0000):
         if self.process_open(in_access=win32con.PROCESS_QUERY_INFORMATION, in_inherit=True):
             self.mem.handle_set(self.handle)
             self.mem.enum_memory_from_to(in_from=in_from, in_to=in_to)
