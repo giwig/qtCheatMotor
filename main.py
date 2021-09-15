@@ -87,8 +87,6 @@ class ProcessList(QDialog):
 
     def close(self) -> bool:
         super(ProcessList, self).close()
-        # self.owner.statusBar().showMessage('hello')
-        # self.parent().statusBar().showMessage('hello')
 
 
 class MainWindow(QMainWindow):
