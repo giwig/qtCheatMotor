@@ -153,7 +153,6 @@ if __name__ == '__main__':
 
     sys.exit(app.exec())
 
-
     p = GWProcessList()
     p.refresh_process_list()
     print("Process count: {} PageSize: {:X} Min: 0x{:X} Max: 0x{:X} CPU's: {}".format(
