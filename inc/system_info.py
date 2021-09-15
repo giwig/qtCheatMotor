@@ -1,6 +1,6 @@
 #!/bin/python
 
-from ctypes import Structure, byref, windll, POINTER, c_uint64, c_uint32
+from ctypes import Structure, byref, windll, POINTER, c_uint64, c_uint32, sizeof
 from ctypes.wintypes import WORD, DWORD, LPVOID, HANDLE, PBOOL, BOOL, USHORT
 from inc.errors import GWErrors
 
@@ -10,8 +10,8 @@ class SYSTEM_INFO(Structure):
         ("wProcessorArchitecture",      WORD),
         ("wReserved",                   WORD),
         ("dwPageSize",                  DWORD),
-        ("lpMinimumApplicationAddress", c_uint64),
-        ("lpMaximumApplicationAddress", c_uint64),
+        ("lpMinimumApplicationAddress", LPVOID),
+        ("lpMaximumApplicationAddress", LPVOID),
         ("dwActiveProcessorMask",       DWORD),
         ("dwNumberOfProcessors",        DWORD),
         ("dwProcessorType",             DWORD),
@@ -22,14 +22,14 @@ class SYSTEM_INFO(Structure):
 
 
 # GetSystemInfo
-GetSystemInfo            = windll.kernel32.GetSystemInfo
-GetSystemInfo.argtypes   = [ POINTER(SYSTEM_INFO) ]
-GetSystemInfo.reltype    = None
+GetSystemInfo                   = windll.kernel32.GetSystemInfo
+GetSystemInfo.argtypes          = [ POINTER(SYSTEM_INFO) ]
+GetSystemInfo.reltype           = None
 
 # GetNativeSystemInfo
-GetNativeSystemInfo            = windll.kernel32.GetNativeSystemInfo
-GetNativeSystemInfo.argtypes   = [ POINTER(SYSTEM_INFO) ]
-GetNativeSystemInfo.reltype    = None
+GetNativeSystemInfo             = windll.kernel32.GetNativeSystemInfo
+GetNativeSystemInfo.argtypes    = [ POINTER(SYSTEM_INFO) ]
+GetNativeSystemInfo.reltype     = None
 
 # IsWow64Process
 IsWow64Process                  = windll.kernel32.IsWow64Process
@@ -65,24 +65,27 @@ class GWSystemInfo:
         self.get_system_info()
         # print(self.system_info)
 
-    def print_system_info(self):
-        pass
-
     def get_system_info(self):
         si = SYSTEM_INFO(0)
+        print("SYSTEM_INFO Size: {}".format(sizeof(SYSTEM_INFO)))
+
         # GetSystemInfo(byref(si))
         GetNativeSystemInfo(byref(si))
+
         self.system_info = si
 
-        self.system_info.wProcessorArchitecture         =   si.wProcessorArchitecture
-        self.system_info.dwPageSize                     =   si.dwPageSize
-        self.system_info.lpMinimumApplicationAddress    =   si.lpMaximumApplicationAddress
-        self.system_info.lpMaximumApplicationAddress    =   si.lpMaximumApplicationAddress
-        self.system_info.dwActiveProcessorMask          =   si.dwActiveProcessorMask
-        self.system_info.dwNumberOfProcessors           =   si.dwNumberOfProcessors
-        self.system_info.dwProcessorType                =   si.dwProcessorType
-        self.system_info.dwAllocationGranularity        =   si.dwAllocationGranularity
-        self.system_info.wProcessorLevel                =   si.wProcessorLevel
-        self.system_info.wProcessorRevision             =   si.wProcessorRevision
+        self.wProcessorArchitecture         =   si.wProcessorArchitecture
+        self.dwPageSize                     =   si.dwPageSize
+        self.lpMinimumApplicationAddress    =   si.lpMinimumApplicationAddress
+        self.lpMaximumApplicationAddress    =   si.lpMaximumApplicationAddress
+        self.dwActiveProcessorMask          =   si.dwActiveProcessorMask
+        self.dwNumberOfProcessors           =   si.dwNumberOfProcessors
+        self.dwProcessorType                =   si.dwProcessorType
+        self.dwAllocationGranularity        =   si.dwAllocationGranularity
+        self.wProcessorLevel                =   si.wProcessorLevel
+        self.wProcessorRevision             =   si.wProcessorRevision
+
+    def print_system_info(self):
+        print("{}".format(self.wProcessorArchitecture))
 
 

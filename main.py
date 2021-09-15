@@ -93,9 +93,10 @@ if __name__ == '__main__':
 
     p = GWProcessList()
     p.refresh_process_list()
-    print("Process count: {} PageSize: {} {:X}".format(
+    print("Process count: {} PageSize: {:X} {:X} {:X}".format(
         p.count,
         p.system_info.dwPageSize,
+        p.system_info.lpMinimumApplicationAddress,
         p.system_info.lpMaximumApplicationAddress
     ))
     for pe in p.p_list:

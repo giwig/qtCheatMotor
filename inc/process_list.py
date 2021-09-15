@@ -82,14 +82,14 @@ class GWProcessList:
         pe64: PROCESSENTRY32W = PROCESSENTRY32W()
         pe64.dwSize = sizeof(pe64)
         if Process32FirstW(self.hSnap, pe64):
-            self.p_list.append( GWProcess( pe64 ) )
+            self.p_list.append( GWProcess( pe=pe64, si=self.system_info ) )
             self.count += 1
             # print("Name == {} PID == {}".format(pe64.szExeFile, pe64.th32ProcessID ))
 
             pe64 = PROCESSENTRY32W()
             pe64.dwSize = sizeof( pe64 )
             while Process32NextW(self.hSnap, pe64):
-                self.p_list.append( GWProcess( pe64 ) )
+                self.p_list.append(GWProcess(pe=pe64, si=self.system_info))
                 self.count += 1
                 # print("Name == {} PID == {}".format(pe64.szExeFile, pe64.th32ProcessID))
                 pe64 = PROCESSENTRY32W()

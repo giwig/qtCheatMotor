@@ -11,6 +11,8 @@ import pywintypes
 import win32process
 from hexdump import hexdump
 from inc.process_memory import GWVirtualMemory
+from inc.system_info import GWSystemInfo
+
 
 """
 kernel32 = WinDLL('kernel32.dll')
@@ -75,6 +77,7 @@ CloseHandle.rettype                 = c_int
 
 class GWProcess:
 
+    si:         GWSystemInfo        = None
     pe:         PROCESSENTRY32W     = PROCESSENTRY32W()
     exe_name:   str                 = None
     handle:     c_void_p            = None
@@ -85,12 +88,15 @@ class GWProcess:
     # ##########################################################################
     #   Constructor
     # ##########################################################################
-    def __init__(self, pe: PROCESSENTRY32W = None):
-        # time.sleep(0.1)
-        # print(pe.szExeFile)
+    def __init__(self, pe: PROCESSENTRY32W = None, si: GWSystemInfo = None):
         if not pe:
             return
         self.pe = pe
+        if si is not None:
+            self.si = si
+        else:
+            self.si = GWSystemInfo()
+
         self.memory_enum_from_to()
         # self.get_dir()
 
@@ -136,6 +142,10 @@ class GWProcess:
     def memory_enum_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0x00007fffffff0000):
         if self.process_open(in_access=win32con.PROCESS_QUERY_INFORMATION, in_inherit=True):
             self.mem.handle_set(self.handle)
+            if in_to >= self.si.lpMaximumApplicationAddress:
+                in_to = self.si.lpMaximumApplicationAddress
+            if in_from <= self.si.lpMinimumApplicationAddress:
+                in_from = self.si.lpMinimumApplicationAddress + 1
             self.mem.enum_memory_from_to(in_from=in_from, in_to=in_to)
             self.mem.handle_remove()
             self.process_close()
