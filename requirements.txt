@@ -1,9 +1,9 @@
 capstone
-pyinjector
-# haystack
-ReadWriteMemory
+# pyinjector
+
+# ReadWriteMemory
 simple-hexdump
-pefile
+# pefile
 
 pywin32
 
@@ -11,4 +11,4 @@ pywin32
 pyqt5
 pyqt5-tools
 
-platinfo
+# platinfo

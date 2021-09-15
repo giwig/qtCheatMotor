@@ -4,8 +4,8 @@ from pprint import pprint
 from ctypes import c_uint64, c_size_t
 
 import win32con
-from platinfo import PlatInfo
-from ReadWriteMemory import ReadWriteMemory, Process
+# from platinfo import PlatInfo
+# from ReadWriteMemory import ReadWriteMemory, Process
 from capstone import *
 from hexdump import hexdump
 
@@ -13,6 +13,7 @@ from inc.process import GWProcess
 from inc.process_list import GWProcessList
 
 
+"""
 def find_process(name="UE4Editor.exe") -> Process:
     rwm = ReadWriteMemory()
     ps: Process = None
@@ -53,6 +54,7 @@ def dism(mem_buf: bytes = None, buff_len: int = 0, address: ctypes.c_uint64 = 0)
         ret_list.append(i)
     return ret_list
 
+"""
 
 if __name__ == '__main__':
     os.system("cls")
@@ -91,7 +93,7 @@ if __name__ == '__main__':
     ps.close()
     """
 
-    import pefile
+    # import pefile
 
     p = GWProcessList()
     p.refresh_process_list()
