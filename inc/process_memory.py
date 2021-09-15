@@ -129,10 +129,10 @@ class GWVirtualMemory:
                     address
                 ))
                 return False
-        print("ProcessID: {:5}\tRegions: {}".format(
-            pid,
-            len(self.memory)
-        ))
+        # print("ProcessID: {:5}\tRegions: {}".format(
+        #     pid,
+        #     len(self.memory)
+        # ))
     # ##########################################################################
     #
     # ##########################################################################

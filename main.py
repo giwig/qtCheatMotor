@@ -1,16 +1,17 @@
+# -*- coding: utf-8 -*-
+
 import os
-import ctypes
 import sys
-from pprint import pprint
-from ctypes import c_uint64, c_size_t
+# from pprint import pprint
+# from ctypes import c_uint64, c_size_t
 
 # import win32con
 # from platinfo import PlatInfo
 # from ReadWriteMemory import ReadWriteMemory, Process
 # from capstone import *
 # from hexdump import hexdump
-
-from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QDialog
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QDialog, QTreeWidgetItem, QTableWidgetItem, QListWidgetItem
 from ui.mainwindow import Ui_MainWindow
 from ui.process_list import Ui_Dialog
 
@@ -68,6 +69,26 @@ class ProcessList(QDialog):
         super(ProcessList, self).__init__(parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+        self.procs: GWProcessList = GWProcessList()
+        self.procs.refresh_process_list()
+        self.ui.listWidget.itemClicked.connect(self.on_item_clicked)
+
+    def showEvent(self, a0: QtGui.QShowEvent) -> None:
+        print("Dialog is show")
+        names = []
+        for p in self.procs.p_list:
+            p: GWProcess = p
+            names.append(p.get_name())
+        self.ui.listWidget.addItems(names)
+
+    def on_item_clicked(self, item: QListWidgetItem):
+        print(item.text())
+        self.owner.statusBar().showMessage(item.text())
+
+    def close(self) -> bool:
+        super(ProcessList, self).close()
+        # self.owner.statusBar().showMessage('hello')
+        # self.parent().statusBar().showMessage('hello')
 
 
 class MainWindow(QMainWindow):
@@ -77,15 +98,16 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.binding()
+        self.statusBar().showMessage('hello')
 
     def binding(self):
-        self.ui.actionChoose.triggered.connect(self.onProcessList)
+        self.ui.actionChoose.triggered.connect(self.on_process_list)
 
-    def onProcessList(self):
+    def on_process_list(self):
         dlg = ProcessList(self)
+        dlg.owner = self
         dlg.exec_()
         print("List")
-
 
 
 if __name__ == '__main__':
