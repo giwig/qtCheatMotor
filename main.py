@@ -100,7 +100,8 @@ if __name__ == '__main__':
         if pe.process_read(c_uint64(read_address), c_size_t(0x100)):
             print(pe.get_memdump(in_off=read_address))
             pe.memory_enum_from_to()
-        print("{:8X}\t{}\t{}".format(pe.get_pid(), pe.pe.szExeFile, pe.file_dir))
+        print("{:8X}\t{}\t{} Regions: {}".format(pe.get_pid(), pe.pe.szExeFile, pe.file_dir, len(pe.mem.memory)))
+
 
 
 

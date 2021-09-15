@@ -109,7 +109,7 @@ class GWProcess:
             return True
         return False
 
-    def memory_enum_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0x7fffffffffffffff):
+    def memory_enum_from_to(self, in_from: c_uint64 = 0, in_to: c_uint64 = 0x00007fffffffffff):
         if self.process_open(in_access=win32con.PROCESS_QUERY_INFORMATION):
             self.mem.handle_set(self.handle)
             self.mem.enum_memory_from_to(in_from=in_from, in_to=in_to)
