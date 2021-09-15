@@ -1,7 +1,6 @@
 #!/bin/python
 import time
-from ctypes import c_uint64, windll, c_uint32, c_void_p, c_char, Structure, c_long, c_ulong, POINTER, sizeof, c_size_t, \
-    c_wchar, c_int, c_bool, WinDLL
+from ctypes import c_uint64, windll, c_uint32, c_void_p, c_char, Structure, c_long, c_ulong, POINTER, sizeof, c_size_t, c_wchar, c_int, c_bool, WinDLL
 from ctypes.wintypes import *
 from pprint import pprint
 
@@ -117,6 +116,12 @@ class GWProcess:
     # ##########################################################################
     def get_pid(self) -> int:
         return int(self.pe.th32ProcessID)
+
+    # ##########################################################################
+    #   Get's ProcessID
+    # ##########################################################################
+    def get_name(self) -> str:
+        return str(self.pe.szExeFile)
 
     # ##########################################################################
     #   Simple HexDump -> String
