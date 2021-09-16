@@ -96,7 +96,7 @@ class GWProcess:
         else:
             self.si = GWSystemInfo()
         self.mem = GWVirtualMemory(si=self.si)
-        self.memory_enum_from_to()
+        # self.memory_enum_from_to()
         # self.get_dir()
 
     # ##########################################################################
