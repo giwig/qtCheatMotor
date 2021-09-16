@@ -11,6 +11,7 @@ Pros and cons in CheatEngine:
 Pro:
 - written in Delphi, which complicates development
 - it is difficult and long to carry out tests with every change.
+- Not everyone knows the Delphi language anymore.
 
 Cons:
 + large community
