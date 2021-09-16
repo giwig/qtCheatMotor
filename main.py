@@ -12,8 +12,10 @@ import sys
 # from hexdump import hexdump
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QDialog, QTreeWidgetItem, QTableWidgetItem, QListWidgetItem
+
+from inc.dlg_memory_map import MemoryMapDialog
+from inc.dlg_process_list import ProcessListDialog
 from ui.mainwindow import Ui_MainWindow
-from ui.process_list import Ui_dlgProcessList
 from ui.memory_map import Ui_dlgMemoryMap
 
 from inc.process import GWProcess
@@ -64,49 +66,6 @@ def dism(mem_buf: bytes = None, buff_len: int = 0, address: ctypes.c_uint64 = 0)
 """
 
 
-class ProcessListDialog(QDialog):
-
-    proc: GWProcess = None
-
-    def __init__(self, parent=None):
-        super(ProcessListDialog, self).__init__(parent)
-        self.ui = Ui_dlgProcessList()
-        self.ui.setupUi(self)
-        self.procs: GWProcessList = GWProcessList()
-        self.procs.refresh_process_list()
-        self.ui.listWidget.itemClicked.connect(self.on_item_clicked)
-
-    def showEvent(self, a0: QtGui.QShowEvent) -> None:
-        names = []
-        for p in self.procs.p_list:
-            p: GWProcess = p
-            names.append(p.get_name())
-        self.ui.listWidget.addItems(names)
-
-    def on_item_clicked(self, item: QListWidgetItem):
-        print(item.text())
-        for p in self.procs.p_list:
-            p: GWProcess = p
-            if p.get_name() == item.text():
-                self.proc = p
-                self.setWindowTitle(p.get_name())
-                self.owner.statusBar().showMessage("{:7}   {}".format(p.get_pid(), p.get_name() ))
-
-    def close(self) -> bool:
-        super(ProcessListDialog, self).close()
-
-
-class MemoryMapDialog(QDialog):
-
-    def __init__(self, parent=None):
-        super(MemoryMapDialog, self).__init__(parent)
-        self.ui = Ui_dlgMemoryMap()
-        self.ui.setupUi(self)
-
-    def showEvent(self, a0: QtGui.QShowEvent) -> None:
-        pass
-
-
 class MainWindow(QMainWindow):
 
     process: GWProcess = None
@@ -122,7 +81,7 @@ class MainWindow(QMainWindow):
         self.ui.actionMemory_map.triggered.connect(self.on_memory_map_clicked)
 
     def on_memory_map_clicked(self):
-        dlg = MemoryMapDialog(self)
+        dlg = MemoryMapDialog(self, self.process)
         dlg.owner = self
         dlg.exec_()
 
@@ -133,6 +92,7 @@ class MainWindow(QMainWindow):
         if dlg.proc is not None:
             self.process = dlg.proc
             self.ui.actionMemory_map.setEnabled(True)
+            self.process.memory_enum_from_to()
 
 
 if __name__ == '__main__':
