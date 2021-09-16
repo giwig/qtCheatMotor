@@ -49,7 +49,7 @@ class Ui_MainWindow(object):
         self.actionChoose.setIcon(icon)
         self.actionChoose.setObjectName("actionChoose")
         self.actionMemory_map = QtWidgets.QAction(MainWindow)
-        self.actionMemory_map.setEnabled(False)
+        self.actionMemory_map.setEnabled(True)
         self.actionMemory_map.setObjectName("actionMemory_map")
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addSeparator()
