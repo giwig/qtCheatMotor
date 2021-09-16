@@ -17,3 +17,19 @@ Cons:
 + large community
 + a lot of functionality in the program
 
+TODO:
+- Make a process library.
+- Make a visual list of processes.
+- Create a library for searching numbers.
+  - byte
+  - word
+  - dword
+  - qword
+  - float
+  - double
+  - string (char, wchar)
+  - array of bytes
+- Create a library for disassembly code (x86, x64)
+
+
+
