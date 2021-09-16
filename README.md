@@ -2,7 +2,7 @@
 
 qtCheatMotor - this is my little python project.
 
-what does it look like now
+<b>what does it look like now:</b>
 
 <center>
 
