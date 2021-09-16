@@ -88,6 +88,7 @@ class ProcessList(QDialog):
             p: GWProcess = p
             if p.get_name() == item.text():
                 self.proc = p
+                self.setWindowTitle(p.get_name())
                 self.owner.statusBar().showMessage("{:7}   {}".format(p.get_pid(), p.get_name() ))
 
     def close(self) -> bool:
@@ -95,6 +96,8 @@ class ProcessList(QDialog):
 
 
 class MainWindow(QMainWindow):
+
+    process: GWProcess = None
 
     def __init__(self, parent=None):
         super(MainWindow, self).__init__()
@@ -110,6 +113,9 @@ class MainWindow(QMainWindow):
         dlg = ProcessList(self)
         dlg.owner = self
         dlg.exec_()
+        if dlg.proc is not None:
+            self.process = dlg.proc
+            self.ui.actionMemory_map.setEnabled(True)
 
 
 if __name__ == '__main__':
