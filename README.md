@@ -2,8 +2,13 @@
 
 qtCheatMotor - this is my little python project.
 
+<center>
+
+what does it look like now
 
 ![alt text](doc/img/qtCheatMotor.gif)
+
+</center>
 
 I want to make a small analogue for CheatEngine in python.
 It may even be possible to make it cross-platform.
