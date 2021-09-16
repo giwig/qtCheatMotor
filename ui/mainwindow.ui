@@ -40,6 +40,7 @@
      <string>Process</string>
     </property>
     <addaction name="actionChoose"/>
+    <addaction name="actionMemory_map"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuProcess"/>
@@ -49,6 +50,9 @@
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -56,6 +60,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionChoose"/>
+   <addaction name="actionMemory_map"/>
   </widget>
   <action name="actionNew">
    <property name="text">
@@ -84,10 +89,16 @@
   </action>
   <action name="actionChoose">
    <property name="icon">
-    <iconset theme="edit-copy"/>
+    <iconset>
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Choose</string>
+    <string>Choose...</string>
+   </property>
+  </action>
+  <action name="actionMemory_map">
+   <property name="text">
+    <string>Memory map</string>
    </property>
   </action>
  </widget>

@@ -65,6 +65,8 @@ def dism(mem_buf: bytes = None, buff_len: int = 0, address: ctypes.c_uint64 = 0)
 
 class ProcessList(QDialog):
 
+    proc: GWProcess = None
+
     def __init__(self, parent=None):
         super(ProcessList, self).__init__(parent)
         self.ui = Ui_Dialog()
@@ -74,7 +76,6 @@ class ProcessList(QDialog):
         self.ui.listWidget.itemClicked.connect(self.on_item_clicked)
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
-        print("Dialog is show")
         names = []
         for p in self.procs.p_list:
             p: GWProcess = p
@@ -83,7 +84,11 @@ class ProcessList(QDialog):
 
     def on_item_clicked(self, item: QListWidgetItem):
         print(item.text())
-        self.owner.statusBar().showMessage(item.text())
+        for p in self.procs.p_list:
+            p: GWProcess = p
+            if p.get_name() == item.text():
+                self.proc = p
+                self.owner.statusBar().showMessage("{:7}   {}".format(p.get_pid(), p.get_name() ))
 
     def close(self) -> bool:
         super(ProcessList, self).close()
@@ -96,16 +101,15 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.binding()
-        self.statusBar().showMessage('hello')
 
     def binding(self):
         self.ui.actionChoose.triggered.connect(self.on_process_list)
+        # self.ui.ac
 
     def on_process_list(self):
         dlg = ProcessList(self)
         dlg.owner = self
         dlg.exec_()
-        print("List")
 
 
 if __name__ == '__main__':
@@ -145,13 +149,8 @@ if __name__ == '__main__':
     ps.close()
     """
 
+    """
     # import pefile
-
-    app = QApplication([])
-    application = MainWindow()
-    application.show()
-
-    sys.exit(app.exec())
 
     p = GWProcessList()
     p.refresh_process_list()
@@ -168,5 +167,14 @@ if __name__ == '__main__':
         if pe.process_read(c_uint64(read_address), c_size_t(0x100)):
             print(pe.get_memdump(in_off=read_address))
         print("PID: {:8X}\tName: {:30}\tRegions: {}".format(pe.get_pid(), pe.pe.szExeFile, len(pe.mem.memory)))
+    """
+
+
+    app = QApplication([])
+    application = MainWindow()
+    application.show()
+
+    sys.exit(app.exec())
+
 
 
