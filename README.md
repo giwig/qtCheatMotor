@@ -3,6 +3,8 @@
 qtCheatMotor - this is my little python project.
 
 
+![alt text](doc/img/qtCheatMotor.gif)
+
 I want to make a small analogue for CheatEngine in python.
 It may even be possible to make it cross-platform.
 
