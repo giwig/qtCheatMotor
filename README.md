@@ -2,11 +2,11 @@
 
 qtCheatMotor - this is my little python project.
 
-<center>
-
 what does it look like now
 
-![alt text](doc/img/qtCheatMotor.gif)
+<center>
+
+  ![alt text](doc/img/qtCheatMotor.gif)
 
 </center>
 
