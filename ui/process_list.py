@@ -11,26 +11,26 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(290, 481)
-        self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
+class Ui_dlgProcessList(object):
+    def setupUi(self, dlgProcessList):
+        dlgProcessList.setObjectName("dlgProcessList")
+        dlgProcessList.resize(290, 481)
+        self.verticalLayout = QtWidgets.QVBoxLayout(dlgProcessList)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.listWidget = QtWidgets.QListWidget(Dialog)
+        self.listWidget = QtWidgets.QListWidget(dlgProcessList)
         self.listWidget.setObjectName("listWidget")
         self.verticalLayout.addWidget(self.listWidget)
-        self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
+        self.buttonBox = QtWidgets.QDialogButtonBox(dlgProcessList)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
-        self.retranslateUi(Dialog)
-        self.buttonBox.accepted.connect(Dialog.accept)
-        self.buttonBox.rejected.connect(Dialog.reject)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.retranslateUi(dlgProcessList)
+        self.buttonBox.accepted.connect(dlgProcessList.accept)
+        self.buttonBox.rejected.connect(dlgProcessList.reject)
+        QtCore.QMetaObject.connectSlotsByName(dlgProcessList)
 
-    def retranslateUi(self, Dialog):
+    def retranslateUi(self, dlgProcessList):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        dlgProcessList.setWindowTitle(_translate("dlgProcessList", "Dialog"))

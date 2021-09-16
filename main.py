@@ -13,7 +13,8 @@ import sys
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QDialog, QTreeWidgetItem, QTableWidgetItem, QListWidgetItem
 from ui.mainwindow import Ui_MainWindow
-from ui.process_list import Ui_Dialog
+from ui.process_list import Ui_dlgProcessList
+from ui.memory_map import Ui_dlgMemoryMap
 
 from inc.process import GWProcess
 from inc.process_list import GWProcessList
@@ -63,13 +64,13 @@ def dism(mem_buf: bytes = None, buff_len: int = 0, address: ctypes.c_uint64 = 0)
 """
 
 
-class ProcessList(QDialog):
+class ProcessListDialog(QDialog):
 
     proc: GWProcess = None
 
     def __init__(self, parent=None):
-        super(ProcessList, self).__init__(parent)
-        self.ui = Ui_Dialog()
+        super(ProcessListDialog, self).__init__(parent)
+        self.ui = Ui_dlgProcessList()
         self.ui.setupUi(self)
         self.procs: GWProcessList = GWProcessList()
         self.procs.refresh_process_list()
@@ -92,7 +93,18 @@ class ProcessList(QDialog):
                 self.owner.statusBar().showMessage("{:7}   {}".format(p.get_pid(), p.get_name() ))
 
     def close(self) -> bool:
-        super(ProcessList, self).close()
+        super(ProcessListDialog, self).close()
+
+
+class MemoryMapDialog(QDialog):
+
+    def __init__(self, parent=None):
+        super(MemoryMapDialog, self).__init__(parent)
+        self.ui = Ui_dlgMemoryMap()
+        self.ui.setupUi(self)
+
+    def showEvent(self, a0: QtGui.QShowEvent) -> None:
+        pass
 
 
 class MainWindow(QMainWindow):
@@ -107,10 +119,15 @@ class MainWindow(QMainWindow):
 
     def binding(self):
         self.ui.actionChoose.triggered.connect(self.on_process_list)
-        # self.ui.ac
+        self.ui.actionMemory_map.triggered.connect(self.on_memory_map_clicked)
+
+    def on_memory_map_clicked(self):
+        dlg = MemoryMapDialog(self)
+        dlg.owner = self
+        dlg.exec_()
 
     def on_process_list(self):
-        dlg = ProcessList(self)
+        dlg = ProcessListDialog(self)
         dlg.owner = self
         dlg.exec_()
         if dlg.proc is not None:
