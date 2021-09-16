@@ -16,6 +16,11 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTreeWidget" name="treeWidget">
+     <property name="font">
+      <font>
+       <family>Lucida Console</family>
+      </font>
+     </property>
      <property name="columnCount">
       <number>3</number>
      </property>

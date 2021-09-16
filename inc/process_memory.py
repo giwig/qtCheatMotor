@@ -42,7 +42,6 @@ PAGE_NOCACHE            =   0x200
 PAGE_WRITECOMBINE       =   0x400
 
 
-
 VirtualQueryEx                 = windll.kernel32.VirtualQueryEx
 VirtualQueryEx.argtypes        = [ c_void_p, c_void_p, POINTER(MEMORY_BASIC_INFORMATION), c_size_t ]
 VirtualQueryEx.rettype         = c_size_t
