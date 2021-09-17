@@ -27,11 +27,12 @@ class MemoryMapDialog(QDialog):
         for m in self.proc.mem.memory.keys():
             size = self.proc.mem.memory[m].RegionSize
             prot = self.proc.mem.memory[m].Protect
-            print(m)
+            # print(m)
             item = QTreeWidgetItem(["0x{:X}".format(m), "{:X}".format(size), "{:08X}".format(prot)])
             # item.addChild(QTreeWidgetItem([m, "LOLO", "LULU"]))
             self.ui.treeWidget.addTopLevelItem(item)
         self.ui.treeWidget.setColumnWidth(0, 150)
+        self.ui.lblInfo.setText("Count: {}    Size: {}".format(self.proc.mem.count, self.proc.mem.get_size_in_byte()))
 
 
 

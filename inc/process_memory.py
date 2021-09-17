@@ -1,9 +1,10 @@
-from ctypes import windll, c_void_p, POINTER, c_size_t, Structure, c_uint64, c_uint32, sizeof
+from ctypes import windll, c_void_p, POINTER, c_size_t, Structure, c_uint64, c_uint32, sizeof, c_wchar, c_wchar_p, byref
 from ctypes.wintypes import DWORD
 from pprint import pprint
 
 from inc.errors import GWErrors
 from inc.system_info import GWSystemInfo
+
 
 
 class MEMORY_BASIC_INFORMATION(Structure):
@@ -46,6 +47,11 @@ VirtualQueryEx                 = windll.kernel32.VirtualQueryEx
 VirtualQueryEx.argtypes        = [ c_void_p, c_void_p, POINTER(MEMORY_BASIC_INFORMATION), c_size_t ]
 VirtualQueryEx.rettype         = c_size_t
 
+# StrFormatByteSizeW
+StrFormatByteSize                 = windll.shlwapi.StrFormatByteSizeW
+StrFormatByteSize.argtypes        = [ c_uint64, POINTER(c_wchar), c_uint32 ]
+StrFormatByteSize.rettype         = c_wchar_p
+
 
 class GWVirtualMemory:
 
@@ -53,6 +59,8 @@ class GWVirtualMemory:
     memory: dict            =   dict()
     err:    GWErrors        =   GWErrors()
     handle                  =   None
+    count:  int             =   0
+    size:   c_uint64        =   0
 
     # ##########################################################################
     #   Constructor
@@ -128,11 +136,40 @@ class GWVirtualMemory:
                     address
                 ))
                 return False
-        # print("ProcessID: {:5}\tRegions: {}".format(
-        #     pid,
-        #     len(self.memory)
-        # ))
+        self.count = len(self.memory)
+        self.size  = 0
+        for m in self.memory.keys():
+            m: dict = m
+            self.size += self.memory[m].RegionSize
+
+    # ##########################################################################
+    # Get count in list
+    # ##########################################################################
+    def get_count(self):
+        return self.count
+
+    # ##########################################################################
+    # Get Size in Bytes
+    # ##########################################################################
+    def get_size_in_byte(self):
+        # s = (c_wchar * 8192)(0)
+        # StrFormatByteSize(self.size, byref(c_wchar), 8192)
+        # print(c_wchar)
+        return self.get_sizeof_fmt(self.size)
+
     # ##########################################################################
     #
     # ##########################################################################
+    def get_sizeof_fmt(self, num, suffix='B'):
+        for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
+            if abs(num) < 1024.0:
+                return "%3.1f%s%s" % (num, unit, suffix)
+            num /= 1024.0
+        return "%.1f %s%s" % (num, 'Yi', suffix)
 
+    # ##########################################################################
+    #
+    # ##########################################################################
+    # ##########################################################################
+    #
+    # ##########################################################################

@@ -27,6 +27,14 @@ class Ui_dlgMemoryMap(object):
         self.treeWidget.headerItem().setText(1, "2")
         self.treeWidget.headerItem().setText(2, "3")
         self.verticalLayout.addWidget(self.treeWidget)
+        self.gboxInfo = QtWidgets.QGroupBox(dlgMemoryMap)
+        self.gboxInfo.setObjectName("gboxInfo")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.gboxInfo)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.lblInfo = QtWidgets.QLabel(self.gboxInfo)
+        self.lblInfo.setObjectName("lblInfo")
+        self.horizontalLayout.addWidget(self.lblInfo)
+        self.verticalLayout.addWidget(self.gboxInfo)
         self.buttonBox = QtWidgets.QDialogButtonBox(dlgMemoryMap)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
@@ -41,3 +49,5 @@ class Ui_dlgMemoryMap(object):
     def retranslateUi(self, dlgMemoryMap):
         _translate = QtCore.QCoreApplication.translate
         dlgMemoryMap.setWindowTitle(_translate("dlgMemoryMap", "Dialog"))
+        self.gboxInfo.setTitle(_translate("dlgMemoryMap", "Info"))
+        self.lblInfo.setText(_translate("dlgMemoryMap", "TextLabel"))
